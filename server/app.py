@@ -23,15 +23,18 @@ def insert():
     if (not todo_value):
         return jsonify(message="No task added")
 
+    f_data  = json.load(open("database.json"))
+
+    if todo_key in f_data and f_data[todo_key]:
+        f_data.pop(todo_key)
+
     data = {todo_key : todo_value}
+    f_data.update(data)
 
-    with open('database.json', "r+") as f:
-        f_data = json.load(f)
-        f_data.update(data)
-        f.seek(0)
-        json.dump(f_data, f)
-
-        return jsonify(message="Added a task!")
+    open("database.json", "w").write(
+        json.dumps(f_data, sort_keys=True, indent=4, separators=(',', ': '))
+    )
+    return jsonify(message="Deleted a task!")
 
 @app.route("/delete", methods=["POST"])
 def delete():
@@ -49,7 +52,6 @@ def delete():
     if todo_key in f_data and f_data[todo_key]:
         f_data.pop(todo_key)
 
-    # Output the updated file with pretty JSON                                      
     open("database.json", "w").write(
         json.dumps(f_data, sort_keys=True, indent=4, separators=(',', ': '))
     )
@@ -57,9 +59,14 @@ def delete():
 
 @app.route("/read", methods=["GET"])
 def read():
-    with open('database.json', "r+") as f:
+    with open('database.json', "r") as f:
         f_data = json.load(f)
-        return f_data
+    result  = []
+
+    for k, v in f_data.items():
+        result.append({'key': k, 'text': v})
+
+    return json.dumps(result)
 
 if __name__ == "__main__":
     app.run(port=4000, debug=True)
