@@ -1,7 +1,7 @@
 # todo-list
 A ToDo List using React and Flask where the user can add and delete todos while also persisting these upon browser close.
 
-We store ToDo items inside a MongoDB
+We store ToDo items inside a json file
 
 ## Project Structure
 
