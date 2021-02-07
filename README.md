@@ -9,14 +9,14 @@ Don't worry about the files that are not listed below, that means you won't need
 
 ```
 └── client                              # Contains all the front end (React) code
-    ├── public                          # Some public files, don't need to touch this 
-    └── src                             # Contains the JS src files that you will need to alter
-        ├── App.js                      # Main file that React Renders, don't need to touch this as it renders the TodoList component that we give 
+    ├── public                          # Some public files 
+    └── src                             # Contains the JS src files
+        ├── App.js                      # Main file that React renders for the TodoList component
         │── api.js                      # Contains functions to make get/post requests to backend
-        └── components                  # Contains main TodoList.js and you should add any other components you may use
-            ├── TodoList.js             # Renders todo-list and your add / delete functions should be contained here, as well as displaying todo
+        └── components                  # Contains main TodoList.js
+            ├── TodoList.js             # Renders todo-list and contains my add / delete functions
                                         # All non code related documents
 ├── server                              # Contains all the backend (Flask) code
-    └── app.py                          # Main file that will contain all your routes and database logic
+    └── app.py                          # Main file that contains all my routes and database logic
 ```
 
