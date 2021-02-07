@@ -5,7 +5,7 @@ We store ToDo items inside a MongoDB
 
 ## Project Structure
 
-Don't worry about the files that are not listed below, that means you won't need to use them
+Main files are listed below
 
 ```
 └── client                              # Contains all the front end (React) code
@@ -20,3 +20,4 @@ Don't worry about the files that are not listed below, that means you won't need
     └── app.py                          # Main file that contains all my routes and database logic
 ```
 
+Read the readme.md in server and client folders, respectively, to run the project
