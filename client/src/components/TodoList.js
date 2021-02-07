@@ -9,6 +9,8 @@ class TodoList extends Component {
             value: '',
             items: []
         };
+
+        this.updateList()
     
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -18,41 +20,61 @@ class TodoList extends Component {
         this.setState({value: event.target.value});
     }
     
+    //Check if it's a number
+    isNumeric(value) {
+        return /^\d+$/.test(value);
+    }
     //Add function
     handleSubmit(event) {
         if (this.state.value !== ""){
-            //alert('A task was submitted: ' + this.state.value);
-            //event.preventDefault();
-            var newItem = {
-				text: this.state.value,
-                // key: Date.now()
-                key: this.state.items.length
-            };
-            // get("/index")
-            // .then(resp => {
-            //     console.log(resp);
-            // }).catch(err => {
-            //     console.log(err);
-            // })
+            //if number then delete that index from json file, else add it
+            if (this.isNumeric(this.state.value)){
+                post("/delete", [this.state.value, "delete task"])
+                .then(resp => {
+                    console.log(resp);
+                }).catch(err =>{
+                    console.log("Error occured:", err);
+                })
+            } else {
+                post("/insert", [this.state.items.length, this.state.value])
+                .then(resp => {
+                    console.log(resp);
+                }).catch(err =>{
+                    console.log("Error occured:", err);
+                })
+            }
 
-            // post("/insert", {"task1" : "get food"})
-            post("/insert", ["task1", "get food"])
+            get("/read")
             .then(resp => {
+                this.state.items = resp
                 console.log(resp);
-            }).catch(err =>{
-                console.log("Error occured:", err);
+                console.log("Got a good response")
+            }).catch(err => {
+                console.log(err);
+                console.log("Got an error")
             })
-
-            this.state.items.push(newItem);
         } else {
             alert('No task was submitted.');
             event.preventDefault();
         }
         console.log(this.state.items);
-        event.preventDefault();
+        // event.preventDefault();
     }
 
     //Delete function
+
+    updateList(){
+        console.log("Updating List!!")
+        get("/read")
+        .then(resp => {
+            this.state.items = resp
+            console.log(resp);
+            console.log("Got a good response")
+        }).catch(err => {
+            console.log(err);
+            console.log("Got an error")
+        })
+    }
 
     render() {
         return (
