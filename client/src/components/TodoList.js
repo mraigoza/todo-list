@@ -67,7 +67,7 @@ class TodoList extends Component {
         console.log("Updating List!!")
         get("/read")
         .then(resp => {
-            this.state.items = resp
+            this.setState({items: resp});
             console.log(resp);
             console.log("Got a good response")
         }).catch(err => {
