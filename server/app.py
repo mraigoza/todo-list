@@ -14,55 +14,52 @@ def index():
 
 @app.route("/insert", methods=["POST"])
 def insert():
-    mongo.db["todolist"].insert_one({"todo_key" : "todo_value"})
-    return jsonify(message="Todo app is running.")
-    print(request.form)
     ls = request.form
-    # ls = request.get_json()
-    #Check if not empty
-    if (not ls):
+    pairs = ls.items()
+    pairs_iterator = iter(pairs)
+    (_, todo_key) = next(pairs_iterator)
+    (_, todo_value) = next(pairs_iterator)
+
+    if (not todo_value):
         return jsonify(message="No task added")
-    
-    #Add first pair
-    pairs = ls.items()
-    print("get pairs")
-    pairs_iterator = iter(pairs)
-    print("get iter")
-    (todo_key, todo_value) = next(pairs_iterator)
-    print("get pair")
-    print(todo_key)
-    print(todo_value)
-    mongo.db["todolist"].insert_one({"todo_key" : "todo_value"})
-    # mongo.db["todolist"].insert_one({todo_key : todo_value})
-    print("inserting")
-    return jsonify(message="Added a task!")
 
-@app.route("/delete", methods=["GET"])
+    data = {todo_key : todo_value}
+
+    with open('database.json', "r+") as f:
+        f_data = json.load(f)
+        f_data.update(data)
+        f.seek(0)
+        json.dump(f_data, f)
+
+        return jsonify(message="Added a task!")
+
+@app.route("/delete", methods=["POST"])
 def delete():
-    ls = request.get_json()
-    #Check if not empty
-    if (not ls):
-        return jsonify(message="No task deleted")
-    
-    #Delete one if matching
+    ls = request.form
     pairs = ls.items()
     pairs_iterator = iter(pairs)
-    (todo_key, todo_value) = next(pairs_iterator)
+    (_, todo_key) = next(pairs_iterator)
+    (_, todo_value) = next(pairs_iterator)
 
-    result = mongo.db["todolist"].delete_one({todo_key : todo_value})
-    
-    return jsonify(message="Deleted " + str(result.deleted_count) + " from collection!")
+    if (not todo_value):
+        return jsonify(message="No task deleted")
+
+    f_data  = json.load(open("database.json"))
+
+    if todo_key in f_data and f_data[todo_key]:
+        f_data.pop(todo_key)
+
+    # Output the updated file with pretty JSON                                      
+    open("database.json", "w").write(
+        json.dumps(f_data, sort_keys=True, indent=4, separators=(',', ': '))
+    )
+    return jsonify(message="Deleted a task!")
 
 @app.route("/read", methods=["GET"])
 def read():
-    result = mongo.db["todolist"].find({})
-    docs = {}
-
-    for doc in result:
-        doc.pop("_id")
-        docs.update(doc)
-
-    return json.loads(json_util.dumps(docs))
+    with open('database.json', "r+") as f:
+        f_data = json.load(f)
+        return f_data
 
 if __name__ == "__main__":
     app.run(port=4000, debug=True)
